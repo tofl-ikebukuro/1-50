@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>英検準一級単語クイズ</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/wanakana/wanakana.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --duo-green: #58cc02;
+      --duo-green-dark: #58a700;
+      --duo-blue: #1cb0f6;
+      --duo-blue-dark: #1899d6;
+      --duo-red: #ea2b2b;
+      --duo-red-dark: #c82424; /* Added for red button active state */
+      --duo-yellow-light: rgba(254, 219, 0, 0.1);
+      --duo-green-light: rgba(88, 204, 2, 0.15);
+      --duo-blue-light: rgba(28, 176, 246, 0.1);
+      --duo-gray-light: #f7f7f7;
+      --duo-gray-border: #e5e5e5;
+      --white: #ffffff;
+      --dark-text: #4c4c4c;
+    }
+    body {
+      font-family: 'Nunito', sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      color: var(--dark-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+      background-color: var(--duo-gray-light);
+      background-image:
+        radial-gradient(circle 50vmax at 10% 20%, var(--duo-green-light), transparent 50%),
+        radial-gradient(circle 40vmax at 90% 85%, var(--duo-blue-light), transparent 50%),
+        radial-gradient(circle 35vmax at 50% 50%, var(--duo-yellow-light), transparent 45%);
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+    /* ▼▼▼ [変更] Duolingo風の配色に戻しました ▼▼▼ */
+    header {
+      background: var(--duo-green);
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--duo-gray-border);
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #title {
+      flex-grow: 1;
+      text-align: center;
+      font-size: 32px;
+      font-weight: 900;
+      font-style: italic;
+      color: var(--white);
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+    }
+    /* ▲▲▲ ▲▲▲ */
+    #start-screen, .quiz-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 40px;
+      background: var(--white);
+      border-radius: 16px;
+      border: 2px solid var(--duo-gray-border);
+      opacity: 0;
+    }
+    .animate-in {
+      animation: fadeInUp 0.5s 0.1s ease-out forwards;
+    }
+    .feedback-animate {
+      animation: popIn 0.4s ease-out forwards;
+    }
+    #start-screen h1 {
+      font-size: 32px;
+      font-weight: 900;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #start-screen p {
+      font-size: 18px;
+      color: var(--dark-text);
+      margin-bottom: 30px;
+    }
+    #username {
+      padding: 12px 15px;
+      font-size: 18px;
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      width: 300px;
+      border: 2px solid var(--duo-gray-border);
+      border-radius: 12px;
+      display: block;
+      margin: 0 auto 20px;
+      transition: all 0.2s ease;
+    }
+    #username:focus {
+      outline: none;
+      border-color: var(--duo-blue);
+    }
+    .quiz-container {
+      width: 100%;
+      min-height: 550px;
+      box-sizing: border-box;
+    }
+    .input-field {
+      margin: 10px;
+      padding: 10px 15px;
+      font-size: 20px;
+      font-weight: 700;
+      width: 250px;
+      border: 2px solid var(--duo-gray-border);
+      border-radius: 12px;
+      transition: all 0.2s ease;
+    }
+    .input-field:focus {
+      outline: none;
+      border-color: var(--duo-blue);
+    }
+    .input-field:disabled {
+      background-color: #f2f2f2;
+      color: #999;
+    }
+    .button {
+      position: relative;
+      margin: 10px 5px;
+      padding: 12px 24px;
+      font-size: 18px;
+      font-weight: 900;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+      border-radius: 16px;
+      color: white;
+      transition: top 0.1s ease, background 0.2s ease;
+    }
+    .button.btn-green {
+      background: var(--duo-green);
+      border-bottom: 4px solid var(--duo-green-dark);
+    }
+    .button.btn-blue {
+      background: var(--duo-blue);
+      border-bottom: 4px solid var(--duo-blue-dark);
+    }
+    .button.btn-red { /* Added for consistency */
+      background: var(--duo-red);
+      border-bottom: 4px solid var(--duo-red-dark);
+    }
+    .button:active {
+      top: 2px;
+      border-bottom-width: 2px;
+    }
+    .button:disabled {
+      background: #ccc;
+      border-bottom: 4px solid #999;
+      cursor: not-allowed;
+      top: 0;
+    }
+    .button:disabled:active {
+      top: 0;
+      border-bottom-width: 4px;
+    }
+    #header-buttons-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    #header-buttons-container div { margin-bottom: 5px; }
+    #header-buttons-container div:last-child { margin-bottom: 0; }
+    #toggleHistoryBtn { display: none; }
+    .circle-button {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border-radius: 50%;
+      margin-left: 8px;
+      font-size: 16px;
+      border-bottom: 2px solid var(--duo-green-dark);
+    }
+    .circle-button:active {
+      top: 1px;
+      border-bottom-width: 1px;
+    }
+    .hidden { display: none; }
+    #question {
+      font-size: 28px;
+      font-weight: 900;
+      margin-bottom: 15px;
+    }
+    #question .jp-translation {
+      font-size: 18px;
+      color: var(--dark-text);
+      margin-top: 8px;
+      font-weight: 400;
+    }
+    #translation { font-size: 18px; margin-top: 20px; line-height: 1.6; }
+    #input-wrapper {
+      position: relative;
+      min-height: 60px;
+      margin: 20px 0;
+    }
+    #feedback {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(160px, -50%);
+      width: 200px;
+      text-align: left;
+      font-size: 24px;
+      font-weight: 900;
+      opacity: 0;
+    }
+    #feedback.correct { color: var(--duo-green); }
+    #feedback.incorrect { color: var(--duo-red); }
+    .progress-bar {
+      height: 20px;
+      background-color: var(--duo-gray-border);
+      border-radius: 10px;
+      margin-top: 20px;
+      overflow: hidden;
+      padding: 4px;
+    }
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: var(--duo-green);
+      border-radius: 8px;
+      transition: width 0.4s ease-in-out;
+      box-shadow: inset 0 2px 0 rgba(255,255,255,0.2);
+    }
+    #history-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      max-height: 250px;
+      overflow-y: auto;
+      background-color: var(--white);
+      border-top: 2px solid var(--duo-gray-border);
+      padding: 10px;
+      box-sizing: border-box;
+      text-align: left;
+      transform: translateY(100%);
+      transition: transform 0.3s ease-in-out;
+      z-index: 100;
+    }
+    #history-container.show { transform: translateY(0); }
+    #history-container h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 900;
+    }
+    #history-list { list-style: none; padding: 0; margin: 0; }
+    #history-list li {
+      background-color: var(--white);
+      padding: 10px;
+      border-bottom: 1px solid var(--duo-gray-border);
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    #history-list li:hover { background-color: var(--duo-gray-light); }
+    #clearHistoryBtn {
+      font-size: 12px;
+      padding: 4px 8px;
+      background-color: var(--duo-red);
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-left: 15px;
+    }
+    #historySearchInput {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    #closeHistoryBtn {
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #888;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
+    #closeHistoryBtn:hover { color: #000; }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes popIn {
+      0% { transform: translate(160px, -50%) scale(0.8); opacity: 0; }
+      80% { transform: translate(160px, -50%) scale(1.1); opacity: 1; }
+      100% { transform: translate(160px, -50%) scale(1); opacity: 1; }
+    }
+    @media (max-width: 768px) {
+      body { padding-bottom: 10px; }
+      header { flex-direction: column; padding: 10px 5px; }
+      #title {
+        font-size: 22px;
+        margin-bottom: 10px;
+      }
+      #header-buttons-container { align-items: center; }
+      .button { padding: 10px 12px; font-size: 14px; }
+      #start-screen, .quiz-container { width: 95%; margin: 15px auto; padding: 20px; min-height: 0; }
+      #start-screen h1 { font-size: 24px; }
+      #username, .input-field { width: 90%; box-sizing: border-box; font-size: 18px; }
+      #question { font-size: 22px; }
+      #feedback { position: static; transform: none; text-align: center; width: 100%; margin-top: 10px; font-size: 20px; }
+      @keyframes popIn {
+          0% { transform: scale(0.8); opacity: 0; }
+          80% { transform: scale(1.1); opacity: 1; }
+          100% { transform: scale(1); opacity: 1; }
+      }
+      #input-wrapper { min-height: 0; display: flex; flex-direction: column; align-items: center; }
+      #history-container { max-height: 40%; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hidden">
+    <div id="title">Eiken Pre-1 Vocabulary Quiz</div>
+    <div id="header-buttons-container">
+      <div id="top-row-buttons">
+        <button class="button btn-blue" id="toggleHistoryBtn">履歴</button>
+        <button class="button btn-blue hidden" id="backToStartBtn">最初に戻る</button>
+        <button class="button btn-blue hidden" id="retryBtn">間違えた問題に再挑戦</button>
+      </div>
+      <div id="bottom-row-buttons">
+        <button class="button btn-blue hidden" id="pdfBtn">PDFをダウンロード</button>
+        <button class="button btn-blue hidden" id="wrongPdfBtn">間違えた単語をPDF化</button>
+        <button class="button btn-blue hidden" id="downloadAllBtn">全単語リストをPDF化</button>
+      </div>
+    </div>
+  </header>
+
+  <div id="start-screen" class="animate-in">
+    <h1>英検準一級単語クイズ</h1>
+    <p>Please enter your name to start the quiz.</p>
+    <input type="text" id="username" placeholder="名前を入力">
+    <button class="button btn-green" id="startBtn" disabled>クイズ開始</button>
+  </div>
+
+  <div class="quiz-container hidden">
+    <div id="question"></div>
+    <div id="input-wrapper">
+      <div id="inputs"></div>
+      <div id="feedback"></div>
+    </div>
+    <button class="button btn-green" id="submitBtn">決定</button>
+    <button class="button btn-blue hidden" id="prevBtn">前へ</button>
+    <button class="button btn-green hidden" id="nextBtn">次へ</button>
+    <button class="button btn-blue hidden" id="showAllBtn">結果をすべて表示</button>
+    <div id="translation"></div>
+    <div class="progress-bar" id="progressBar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div id="scoreBoard"></div>
+  </div>
+
+  <div id="history-container">
+    <button id="closeHistoryBtn" title="閉じる">&times;</button>
+    <h2>プレイ履歴<button id="clearHistoryBtn" class="button btn-red">全て消去</button></h2>
+    <input type="search" id="historySearchInput" placeholder="名前や日付で履歴を検索...">
+    <ul id="history-list"></ul>
+  </div>
+
+  <script>
+    const allQuestions = [
+  {
+    "sentence": "Patients are ___ to infection just after surgery.",
+    "answers": ["vulnerable"],
+    "translation": "Patients are vulnerable to infection just after surgery.",
+    "jpTranslation": "患者は手術の直後、感染症にかかりやすくなる。",
+    "blanksTranslation": ["傷つきやすい、かかりやすい"]
+  },
+  {
+    "sentence": "Make sure to ___ all the warning signs.",
+    "answers": ["heed"],
+    "translation": "Make sure to heed all the warning signs.",
+    "jpTranslation": "すべての警戒標識に気をつけるようにしてください。",
+    "blanksTranslation": ["〜に気をつける、を心に留める"]
+  },
+  {
+    "sentence": "A ___ captured the arrest on video.",
+    "answers": ["bystander"],
+    "translation": "A bystander captured the arrest on video.",
+    "jpTranslation": "その場に居合わせた人が逮捕の様子を動画に収めた。",
+    "blanksTranslation": ["傍観者、見物人"]
+  },
+  {
+    "sentence": "The bridge eases ___ in the area.",
+    "answers": ["congestion"],
+    "translation": "The bridge eases congestion in the area.",
+    "jpTranslation": "その橋は地域の混雑を緩和している。",
+    "blanksTranslation": ["混雑"]
+  },
+  {
+    "sentence": "She ___ all her appliances and replaced them with new ones.",
+    "answers": ["discarded"],
+    "translation": "She discarded all her appliances and replaced them with new ones.",
+    "jpTranslation": "彼女はすべての電化製品を捨て、新しいものに買い換えた。",
+    "blanksTranslation": ["〜を捨てる、処分する"]
+  },
+  {
+    "sentence": "The ___ was completely out of control and spread quickly.",
+    "answers": ["blaze"],
+    "translation": "The blaze was completely out of control and spread quickly.",
+    "jpTranslation": "炎は完全に制御不能で、あっという間に燃え広がった。",
+    "blanksTranslation": ["炎、火炎"]
+  },
+  {
+    "sentence": "He is a little ___ with a paintbrush.",
+    "answers": ["clumsy"],
+    "translation": "He is a little clumsy with a paintbrush.",
+    "jpTranslation": "彼は絵筆を使うのが少し不器用だ。",
+    "blanksTranslation": ["不器用な、ぎこちない"]
+  },
+  {
+    "sentence": "We must ___ major sources of pollution quickly.",
+    "answers": ["eliminate"],
+    "translation": "We must eliminate major sources of pollution quickly.",
+    "jpTranslation": "私たちは主要な汚染源を迅速に取り除かなければならない。",
+    "blanksTranslation": ["〜を取り除く、外す"]
+  },
+  {
+    "sentence": "Stock prices ___ after the company's announcement.",
+    "answers": ["soared"],
+    "translation": "Stock prices soared after the company's announcement.",
+    "jpTranslation": "その会社の発表後、株価は急騰した。",
+    "blanksTranslation": ["急上昇する、舞い上がる"]
+  },
+  {
+    "sentence": "The invention of the Internet had a ___ effect on our lives.",
+    "answers": ["profound"],
+    "translation": "The invention of the Internet had a profound effect on our lives.",
+    "jpTranslation": "インターネットの発明は私たちの生活に重大な影響を及ぼした。",
+    "blanksTranslation": ["重大な、深い"]
+  },
+  {
+    "sentence": "She has all the right ___ for the job.",
+    "answers": ["credentials"],
+    "translation": "She has all the right credentials for the job.",
+    "jpTranslation": "彼女はその仕事に申し分のない経歴を持っている。",
+    "blanksTranslation": ["経歴、資格"]
+  },
+  {
+    "sentence": "We need to ___ our contract before we sign it.",
+    "answers": ["amend"],
+    "translation": "We need to amend our contract before we sign it.",
+    "jpTranslation": "私たちは署名する前に契約書を修正する必要がある。",
+    "blanksTranslation": ["〜を修正する、改める"]
+  },
+  {
+    "sentence": "The politician's speech ___ the crowd.",
+    "answers": ["agitated"],
+    "translation": "The politician's speech agitated the crowd.",
+    "jpTranslation": "その政治家の演説は群衆を扇動した。",
+    "blanksTranslation": ["〜を扇動する、動揺させる"]
+  },
+  {
+    "sentence": "Please be ___ when you talk to him about the matter.",
+    "answers": ["discreet"],
+    "translation": "Please be discreet when you talk to him about the matter.",
+    "jpTranslation": "その件で彼と話すときは、くれぐれも慎重にお願いします。",
+    "blanksTranslation": ["分別のある、思慮深い"]
+  },
+  {
+    "sentence": "She ___ the house at one million dollars.",
+    "answers": ["appraised"],
+    "translation": "She appraised the house at one million dollars.",
+    "jpTranslation": "彼女はその家を100万ドルと査定した。",
+    "blanksTranslation": ["〜を評価する、鑑定する"]
+  },
+  {
+    "sentence": "Rice is a ___ food in many Asian countries.",
+    "answers": ["staple"],
+    "translation": "Rice is a staple food in many Asian countries.",
+    "jpTranslation": "米は多くのアジアの国で主食となっている。",
+    "blanksTranslation": ["必需食品、主要産物"]
+  },
+  {
+    "sentence": "These shoes are very ___ and will last a long time.",
+    "answers": ["durable"],
+    "translation": "These shoes are very durable and will last a long time.",
+    "jpTranslation": "この靴はとても丈夫で長持ちするだろう。",
+    "blanksTranslation": ["耐久性のある、丈夫な"]
+  },
+  {
+    "sentence": "He ordered a ___ from the menu.",
+    "answers": ["beverage"],
+    "translation": "He ordered a beverage from the menu.",
+    "jpTranslation": "彼はメニューから飲み物を注文した。",
+    "blanksTranslation": ["飲み物、飲料"]
+  },
+  {
+    "sentence": "The government ___ funds for the new project.",
+    "answers": ["allocated"],
+    "translation": "The government allocated funds for the new project.",
+    "jpTranslation": "政府は新しいプロジェクトに資金を割り当てた。",
+    "blanksTranslation": ["〜を割り当てる、分配する"]
+  },
+  {
+    "sentence": "She is a ___ expert in her field.",
+    "answers": ["renowned"],
+    "translation": "She is a renowned expert in her field.",
+    "jpTranslation": "彼女は自分の分野で有名な専門家だ。",
+    "blanksTranslation": ["名高い、著名な"]
+  },
+  {
+    "sentence": "Please place the ___ on the table.",
+    "answers": ["utensils"],
+    "translation": "Please place the utensils on the table.",
+    "jpTranslation": "食卓に食器を並べてください。",
+    "blanksTranslation": ["調理器具、家庭用品"]
+  },
+  {
+    "sentence": "He is a ___ and healthy man.",
+    "answers": ["robust"],
+    "translation": "He is a robust and healthy man.",
+    "jpTranslation": "彼はたくましくて健康な男性だ。",
+    "blanksTranslation": ["丈夫な、がっしりした"]
+  },
+  {
+    "sentence": "The painting ___ a beautiful landscape.",
+    "answers": ["depicts"],
+    "translation": "The painting depicts a beautiful landscape.",
+    "jpTranslation": "その絵画は美しい風景を描写している。",
+    "blanksTranslation": ["〜を描写する、描く"]
+  },
+  {
+    "sentence": "Please ___ the payment by the due date.",
+    "answers": ["remit"],
+    "translation": "Please remit the payment by the due date.",
+    "jpTranslation": "期日までに支払いをご送金ください。",
+    "blanksTranslation": ["〜を送金する、送る"]
+  },
+  {
+    "sentence": "The food will ___ if you leave it out of the refrigerator.",
+    "answers": ["perish"],
+    "translation": "The food will perish if you leave it out of the refrigerator.",
+    "jpTranslation": "冷蔵庫から出しておくと、食べ物は腐ってしまいます。",
+    "blanksTranslation": ["腐る、滅びる"]
+  },
+  {
+    "sentence": "Please ___ to the rules of the game.",
+    "answers": ["adhere"],
+    "translation": "Please adhere to the rules of the game.",
+    "jpTranslation": "ゲームのルールを守ってください。",
+    "blanksTranslation": ["〜を順守する、にくっつく"]
+  },
+  {
+    "sentence": "The roads are always ___ during rush hour.",
+    "answers": ["congested"],
+    "translation": "The roads are always congested during rush hour.",
+    "jpTranslation": "ラッシュアワーの間、道路はいつも混雑している。",
+    "blanksTranslation": ["混雑した、詰まった"]
+  },
+  {
+    "sentence": "The ___ company developed a new drug.",
+    "answers": ["pharmaceutical"],
+    "translation": "The pharmaceutical company developed a new drug.",
+    "jpTranslation": "その製薬会社は新薬を開発した。",
+    "blanksTranslation": ["製薬の、調剤の"]
+  },
+  {
+    "sentence": "The company will ___ you for your travel expenses.",
+    "answers": ["reimburse"],
+    "translation": "The company will reimburse you for your travel expenses.",
+    "jpTranslation": "会社はあなたの旅費を払い戻します。",
+    "blanksTranslation": ["〜を払い戻す、返済する"]
+  },
+  {
+    "sentence": "I can't ___ this product because I don't believe in it.",
+    "answers": ["endorse"],
+    "translation": "I can't endorse this product because I don't believe in it.",
+    "jpTranslation": "私はこの製品を信じていないので、推薦することはできません。",
+    "blanksTranslation": ["〜を推薦する、支持する"]
+  },
+  {
+    "sentence": "The sound of the rain was very ___.",
+    "answers": ["soothing"],
+    "translation": "The sound of the rain was very soothing.",
+    "jpTranslation": "雨の音はとても心地よかった。",
+    "blanksTranslation": ["心地よい、なだめるような"]
+  },
+  {
+    "sentence": "The plane went through a ___ patch of air.",
+    "answers": ["turbulent"],
+    "translation": "The plane went through a turbulent patch of air.",
+    "jpTranslation": "飛行機は乱気流の領域を通過した。",
+    "blanksTranslation": ["激動の、荒れ狂う"]
+  },
+  {
+    "sentence": "The book is a ___ of the author's life.",
+    "answers": ["chronicle"],
+    "translation": "The book is a chronicle of the author's life.",
+    "jpTranslation": "その本は著者の人生の記録だ。",
+    "blanksTranslation": ["年代記、記録"]
+  },
+  {
+    "sentence": "Please ___ your report to one page.",
+    "answers": ["condense"],
+    "translation": "Please condense your report to one page.",
+    "jpTranslation": "報告書を1ページにまとめてください。",
+    "blanksTranslation": ["〜を凝縮する、要約する"]
+  },
+  {
+    "sentence": "The package arrived ___, despite the long journey.",
+    "answers": ["intact"],
+    "translation": "The package arrived intact, despite the long journey.",
+    "jpTranslation": "長い旅にもかかわらず、荷物は無傷で届いた。",
+    "blanksTranslation": ["無傷の、損なわれていない"]
+  },
+  {
+    "sentence": "The ___ caused a shortage of water in the region.",
+    "answers": ["drought"],
+    "translation": "The drought caused a shortage of water in the region.",
+    "jpTranslation": "干ばつはその地域で水不足を引き起こした。",
+    "blanksTranslation": ["干ばつ、日照り続き"]
+  },
+  {
+    "sentence": "He has a very ___ business.",
+    "answers": ["lucrative"],
+    "translation": "He has a very lucrative business.",
+    "jpTranslation": "彼はとても儲かるビジネスをしている。",
+    "blanksTranslation": ["儲かる、有利な"]
+  },
+  {
+    "sentence": "The ___ of the students' scores was very high.",
+    "answers": ["aggregate"],
+    "translation": "The aggregate of the students' scores was very high.",
+    "jpTranslation": "生徒たちの合計点は非常に高かった。",
+    "blanksTranslation": ["総計、集合体"]
+  },
+  {
+    "sentence": "This software is not ___ with your computer.",
+    "answers": ["compatible"],
+    "translation": "This software is not compatible with your computer.",
+    "jpTranslation": "このソフトウェアはあなたのコンピュータと互換性がありません。",
+    "blanksTranslation": ["互換性のある、両立できる"]
+  },
+  {
+    "sentence": "The celebrity's ___ helped to sell the product.",
+    "answers": ["endorsement"],
+    "translation": "The celebrity's endorsement helped to sell the product.",
+    "jpTranslation": "その有名人の推薦は、製品の販売に役立った。",
+    "blanksTranslation": ["推薦、支持"]
+  },
+  {
+    "sentence": "You can save money by buying ___ drugs.",
+    "answers": ["generic"],
+    "translation": "You can save money by buying generic drugs.",
+    "jpTranslation": "ジェネリック医薬品を買うことでお金を節約できる。",
+    "blanksTranslation": ["一般的な、ブランド名のない"]
+  },
+  {
+    "sentence": "There is a ___ fee for using the service.",
+    "answers": ["nominal"],
+    "translation": "There is a nominal fee for using the service.",
+    "jpTranslation": "そのサービスを利用するには、ほんのわずかな手数料がかかる。",
+    "blanksTranslation": ["ほんのわずかの、名目上の"]
+  },
+  {
+    "sentence": "There is a ___ between the two reports.",
+    "answers": ["discrepancy"],
+    "translation": "There is a discrepancy between the two reports.",
+    "jpTranslation": "2つの報告書には食い違いがある。",
+    "blanksTranslation": ["食い違い、不一致"]
+  },
+  {
+    "sentence": "You are ___ for any damage you cause.",
+    "answers": ["liable"],
+    "translation": "You are liable for any damage you cause.",
+    "jpTranslation": "あなたが引き起こした損害については、あなたに責任があります。",
+    "blanksTranslation": ["責任がある、〜しがちな"]
+  },
+  {
+    "sentence": "The training program is very ___.",
+    "answers": ["rigorous"],
+    "translation": "The training program is very rigorous.",
+    "jpTranslation": "そのトレーニングプログラムは非常に厳しい。",
+    "blanksTranslation": ["厳格な、厳しい"]
+  },
+  {
+    "sentence": "He won the championship for the third ___ year.",
+    "answers": ["consecutive"],
+    "translation": "He won the championship for the third consecutive year.",
+    "jpTranslation": "彼は3年連続で選手権に優勝した。",
+    "blanksTranslation": ["連続した"]
+  },
+  {
+    "sentence": "The company agreed to ___ the fee.",
+    "answers": ["waive"],
+    "translation": "The company agreed to waive the fee.",
+    "jpTranslation": "会社はその料金を免除することに同意した。",
+    "blanksTranslation": ["〜を放棄する、差し控える"]
+  },
+  {
+    "sentence": "There was a ___ in demand for the new product.",
+    "answers": ["surge"],
+    "translation": "There was a surge in demand for the new product.",
+    "jpTranslation": "新製品への需要が急増した。",
+    "blanksTranslation": ["急増、殺到"]
+  },
+  {
+    "sentence": "He used his house as ___ for the loan.",
+    "answers": ["collateral"],
+    "translation": "He used his house as collateral for the loan.",
+    "jpTranslation": "彼はそのローンに家を担保として差し出した。",
+    "blanksTranslation": ["担保、保証物件"]
+  }
+];
+
+    const CORRECT_PASSWORD = '1234';
+
+    let playerName = '';
+    let questions = [];
+    let current = 0, score = 0;
+    let lastAnsweredIndex = -1;
+    let userAnswers = [], incorrectQuestions = [], retryMode = false, wrongAnswers = [];
+    let keyupLock = false;
+    let titleClickCount = 0;
+    let titleClickTimer = null;
+    let englishVoices = [];
+
+    const header = document.querySelector("header");
+    const startScreen = document.getElementById("start-screen");
+    const startBtn = document.getElementById("startBtn");
+    const usernameInput = document.getElementById("username");
+    const quizContainer = document.querySelector(".quiz-container");
+    const mainTitle = document.getElementById("title");
+    const startScreenTitle = document.querySelector("#start-screen h1");
+    const qEl = document.getElementById("question");
+    const inputEl = document.getElementById("inputs");
+    const feedbackEl = document.getElementById("feedback");
+    const translationEl = document.getElementById("translation");
+    const scoreBoard = document.getElementById("scoreBoard");
+    const pdfBtn = document.getElementById("pdfBtn");
+    const wrongPdfBtn = document.getElementById("wrongPdfBtn");
+    const retryBtn = document.getElementById("retryBtn");
+    const showAllBtn = document.getElementById("showAllBtn");
+    const submitBtn = document.getElementById("submitBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const progressBar = document.getElementById("progressBar");
+    const progressEl = document.getElementById("progress");
+    const downloadAllBtn = document.getElementById("downloadAllBtn");
+    const backToStartBtn = document.getElementById("backToStartBtn");
+    const prevBtn = document.getElementById("prevBtn");
+    const toggleHistoryBtn = document.getElementById("toggleHistoryBtn");
+    const historyContainer = document.getElementById("history-container");
+    const clearHistoryBtn = document.getElementById("clearHistoryBtn");
+    const historySearchInput = document.getElementById("historySearchInput");
+    const closeHistoryBtn = document.getElementById("closeHistoryBtn");
+
+    function loadQuestion() {
+      quizContainer.classList.remove('animate-in');
+      void quizContainer.offsetWidth;
+      quizContainer.classList.add('animate-in');
+      retryBtn.classList.add("hidden");
+      prevBtn.classList.add("hidden");
+      nextBtn.classList.add("hidden");
+      showAllBtn.classList.add("hidden");
+      qEl.style.marginBottom = "";
+      translationEl.style.marginTop = "";
+      const q = questions[current];
+      qEl.innerHTML = `<div>Q${current + 1} / ${questions.length}: ${q.sentence}</div><div class="jp-translation">${q.jpTranslation}</div>`;
+      inputEl.innerHTML = "";
+      feedbackEl.textContent = "";
+      feedbackEl.classList.remove('feedback-animate');
+      translationEl.textContent = "";
+      q.answers.forEach((_, i) => {
+        const inp = document.createElement("input");
+        inp.type = "text";
+        inp.className = "input-field";
+        inp.id = "ans" + i;
+        inputEl.appendChild(inp);
+      });
+      const inputs = document.querySelectorAll(".input-field");
+      inputs[0].focus();
+      inputs.forEach((inp, idx) => {
+        inp.addEventListener("keydown", e => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            if (idx < inputs.length - 1) {
+              inputs[idx + 1].focus();
+            } else {
+              keyupLock = true;
+              checkAnswer();
+            }
+          }
+        });
+      });
+      if (userAnswers[current]) {
+        inputs.forEach((inp, i) => {
+          inp.value = userAnswers[current].user[i] || "";
+        });
+      }
+      submitBtn.classList.remove("hidden");
+      const progressPercentage = (questions.length > 1) ? Math.round((current / (questions.length - 1)) * 100) : 0;
+      progressEl.style.width = `${progressPercentage}%`;
+    }
+
+    function recalculateScore() {
+      score = userAnswers.filter(answer => {
+        if (!answer) return false;
+        const q = allQuestions.find(q => q.sentence === answer.question);
+        if (!q) return false;
+        return answer.user.every((userAns, i) => (userAns || "").toLowerCase() === (q.answers[i] || "").toLowerCase());
+      }).length;
+    }
+
+    function checkAnswer() {
+      const q = questions[current];
+      let correct = true, answersGiven = [];
+      q.answers.forEach((ans, i) => {
+        const userAns = document.getElementById("ans" + i).value.trim();
+        answersGiven.push(userAns);
+        if (userAns.toLowerCase() !== ans.toLowerCase()) correct = false;
+      });
+      userAnswers[current] = { question: q.sentence, user: answersGiven };
+      if (!retryMode) {
+        recalculateScore();
+      }
+      if (!correct) {
+        if (!incorrectQuestions.some(item => item.sentence === q.sentence)) incorrectQuestions.push(q);
+        if (!wrongAnswers.some(item => item.sentence === q.sentence)) wrongAnswers.push(q);
+      } else {
+        incorrectQuestions = incorrectQuestions.filter(item => item.sentence !== q.sentence);
+        wrongAnswers = wrongAnswers.filter(item => item.sentence !== q.sentence);
+      }
+      lastAnsweredIndex = Math.max(lastAnsweredIndex, current);
+      displayAnsweredQuestion(current);
+    }
+
+    function loadNextNewQuestion() {
+      current++;
+      loadQuestion();
+    }
+
+    function displayAnsweredQuestion(index) {
+      current = index;
+      const q = questions[index];
+      const recordedEntry = userAnswers[index];
+      qEl.innerHTML = `<div>Q${current + 1} / ${questions.length}: ${q.sentence}</div><div class="jp-translation">${q.jpTranslation}</div>`;
+      inputEl.innerHTML = "";
+      q.answers.forEach((_, i) => {
+        const inp = document.createElement("input");
+        inp.type = "text";
+        inp.className = "input-field";
+        inp.id = "ans" + i;
+        inputEl.appendChild(inp);
+      });
+      const inputs = inputEl.querySelectorAll(".input-field");
+      inputs.forEach((inp, i) => {
+        inp.value = recordedEntry.user[i] || "";
+        inp.disabled = true;
+        const wasThisPartCorrect = (recordedEntry.user[i] || "").toLowerCase() === (q.answers[i] || "").toLowerCase();
+        inp.style.borderColor = wasThisPartCorrect ? 'var(--duo-green)' : 'var(--duo-red)';
+        inp.style.borderWidth = '2px';
+      });
+      submitBtn.classList.add("hidden");
+      const userWasCorrect = recordedEntry.user.every((ans, i) => (ans || "").toLowerCase() === (q.answers[i] || "").toLowerCase());
+      feedbackEl.className = "feedback-animate";
+      feedbackEl.textContent = userWasCorrect ? "✅ 正解！" : "❌ 不正解";
+      feedbackEl.classList.add(userWasCorrect ? "correct" : "incorrect");
+      let highlighted = q.translation;
+      q.answers.forEach(ans => {
+        highlighted = highlighted.replace(new RegExp(`\\b${ans}\\b`, "gi"), `<span style="font-weight: 900; color: red;">${ans}</span>`);
+      });
+      translationEl.innerHTML = `
+        <p><b>英文:</b> ${highlighted} <button class="button circle-button btn-green" onclick="speak('${q.translation.replace(/"/g, '')}')">🔊</button></p>
+        <p><b>答え:</b> ${q.answers.join(", ")} ${q.answers.map(ans => `<button class="button circle-button btn-green" onclick="speak('${ans}')">🔊</button>`).join(" ")}</p>
+        <p><b>日本語訳:</b> ${q.blanksTranslation.join(", ")}</p>
+      `;
+      const isLastQuestion = index === questions.length - 1;
+      prevBtn.classList.toggle("hidden", index <= 0);
+      showAllBtn.classList.toggle("hidden", !(isLastQuestion && current === lastAnsweredIndex));
+      nextBtn.classList.toggle("hidden", isLastQuestion);
+    }
+
+    function goToPreviousQuestion() {
+      if (current > 0) {
+        current--;
+        loadQuestion();
+      }
+    }
+
+    function handleNextClick() {
+      if (current < lastAnsweredIndex) {
+        displayAnsweredQuestion(current + 1);
+      } else {
+        loadNextNewQuestion();
+      }
+    }
+
+    function showAllResults() {
+      progressBar.classList.add("hidden");
+      recalculateScore();
+      const finalScoreText = retryMode ? `${score} / ${questions.length}` : `${score} / ${allQuestions.length}`;
+      savePlayHistory(playerName, finalScoreText);
+      displayPlayHistory();
+      scoreBoard.textContent = `スコア: ${finalScoreText}`;
+      qEl.textContent = "全結果";
+      inputEl.innerHTML = "";
+      feedbackEl.textContent = "";
+      translationEl.innerHTML = "";
+      qEl.style.marginBottom = "0";
+      translationEl.style.marginTop = "5px";
+      translationEl.innerHTML = `<p style="margin: 0;"><b>名前:</b> ${playerName}</p><p><b>スコア:</b> ${finalScoreText}</p>`;
+      userAnswers.forEach((entry, idx) => {
+        if (!entry) return;
+        const originalQuestion = allQuestions.find(q => q.sentence === entry.question);
+        if (!originalQuestion) return;
+        let highlightedSentence = originalQuestion.translation;
+        originalQuestion.answers.forEach(ans => {
+          highlightedSentence = highlightedSentence.replace(new RegExp(`\\b(${ans})\\b`, 'gi'), `<span style="font-weight: 900; color: red;">$1</span>`);
+        });
+        const userAnswersGiven = entry.user.join(", ");
+        const isAnswerCorrect = entry.user.every((ans, i) => (ans || "").toLowerCase() === (originalQuestion.answers[i] || "").toLowerCase());
+        let yourAnswerHTML = isAnswerCorrect ? `<p style="margin: 5px 0;"><b>あなたの回答:</b> ${userAnswersGiven} <span style="color: var(--duo-green);">✅</span></p>` : `<p style="margin: 5px 0;"><b>あなたの回答:</b> <span style="color: var(--duo-red);">${userAnswersGiven || "(無回答)"}</span> ❌</p>`;
+        const div = document.createElement("div");
+        div.style.cssText = "text-align: left; margin: 15px 10px; border-bottom: 1px solid #eee; padding-bottom: 10px;";
+        div.innerHTML = `<p style="margin: 5px 0;"><b>Q${idx + 1}:</b> ${highlightedSentence}</p><p style="margin: 5px 0; color: #555; font-size: 14px;"><b>和訳:</b> ${originalQuestion.jpTranslation}</p>${yourAnswerHTML}`;
+        translationEl.appendChild(div);
+      });
+      pdfBtn.classList.remove("hidden");
+      backToStartBtn.classList.remove("hidden");
+      if (wrongAnswers.length > 0) wrongPdfBtn.classList.remove("hidden");
+      if (incorrectQuestions.length > 0) {
+        retryBtn.textContent = `間違えた ${incorrectQuestions.length} 問に再挑戦`;
+        retryBtn.classList.remove("hidden");
+      } else {
+        retryBtn.classList.add("hidden");
+      }
+      showAllBtn.classList.add("hidden");
+      nextBtn.classList.add("hidden");
+      prevBtn.classList.add("hidden");
+    }
+
+    function savePlayHistory(name, scoreText) {
+      const date = new Date();
+      const formattedDate = `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+      const newRecord = { name, score: scoreText, date: formattedDate, results: JSON.parse(JSON.stringify(userAnswers)) };
+      const history = JSON.parse(localStorage.getItem('quizPlayHistory')) || [];
+      history.unshift(newRecord);
+      localStorage.setItem('quizPlayHistory', JSON.stringify(history));
+    }
+
+    function displayPlayHistory(searchTerm = '') {
+      let history = JSON.parse(localStorage.getItem('quizPlayHistory')) || [];
+      const historyList = document.getElementById('history-list');
+      const lowerCaseSearchTerm = searchTerm.toLowerCase();
+      if (lowerCaseSearchTerm) {
+        history = history.filter(record => `[${record.date}] ${record.name} - スコア: ${record.score}`.toLowerCase().includes(lowerCaseSearchTerm));
+      }
+      historyList.innerHTML = '';
+      history.forEach(record => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `[${record.date}] ${record.name} - スコア: ${record.score}`;
+        listItem.title = 'この結果をPDFでダウンロード';
+        listItem.addEventListener('click', () => downloadHistoryPDF(record));
+        historyList.appendChild(listItem);
+      });
+    }
+
+    function initQuiz() {
+      lastAnsweredIndex = -1;
+      score = 0;
+      userAnswers = [];
+      incorrectQuestions = [];
+      wrongAnswers = [];
+      questions = [...allQuestions];
+      loadProgress();
+      shuffle(questions);
+      current = 0;
+      loadQuestion();
+    }
+
+    function restartQuiz() {
+      window.location.reload();
+    }
+
+    function retryIncorrect() {
+      if (incorrectQuestions.length === 0) return;
+      lastAnsweredIndex = -1;
+      score = 0;
+      userAnswers = [];
+      wrongAnswers = [];
+      questions = [...incorrectQuestions];
+      incorrectQuestions = [];
+      retryMode = true;
+      scoreBoard.textContent = "";
+      progressBar.classList.remove("hidden");
+      pdfBtn.classList.add("hidden");
+      wrongPdfBtn.classList.add("hidden");
+      retryBtn.classList.add("hidden");
+      backToStartBtn.classList.add("hidden");
+      quizContainer.classList.remove("hidden");
+      header.classList.remove("hidden");
+      current = 0;
+      loadQuestion();
+    }
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function saveProgress() {
+      localStorage.setItem('eikenQuizIncorrect', JSON.stringify(incorrectQuestions.map(q => q.sentence)));
+    }
+
+    function loadProgress() {
+      try {
+        const savedIncorrect = localStorage.getItem('eikenQuizIncorrect');
+        if (savedIncorrect) {
+          const incorrectSentences = JSON.parse(savedIncorrect);
+          if (Array.isArray(incorrectSentences)) {
+            const loadedIncorrect = allQuestions.filter(q => incorrectSentences.includes(q.sentence));
+            if (loadedIncorrect.length > 0) {
+              incorrectQuestions = loadedIncorrect;
+              retryBtn.textContent = `間違えた ${incorrectQuestions.length} 問に再挑戦`;
+              retryBtn.classList.remove("hidden");
+            }
+          }
+        }
+      } catch (e) {
+        console.error("保存データの読み込みに失敗しました:", e);
+        localStorage.removeItem('eikenQuizIncorrect');
+      }
+    }
+
+    function loadVoices() {
+      englishVoices = speechSynthesis.getVoices().filter(voice => voice.lang.startsWith('en-'));
+    }
+
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = loadVoices;
+    }
+    loadVoices();
+
+    /* ▼▼▼ [変更] 音声再生が途切れるバグを修正 ▼▼▼ */
+    function speak(text) {
+      if (speechSynthesis.speaking) {
+        speechSynthesis.cancel();
+      }
+      // A short timeout helps prevent a race condition bug in some browsers (like Chrome)
+      // where cancel() also cancels the new utterance if called too closely together.
+      setTimeout(() => {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = "en-US";
+        if (englishVoices.length > 0) {
+          let selectedVoice = englishVoices.find(v => v.lang === "en-US" && v.name.includes("Female")) ||
+                              englishVoices.find(v => v.lang === "en-US") ||
+                              englishVoices[0];
+          u.voice = selectedVoice;
+        }
+        speechSynthesis.speak(u);
+      }, 50);
+    }
+    /* ▲▲▲ ▲▲▲ */
+
+    function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      let usernameForPdf = wanakana.isJapanese(playerName) ? wanakana.toRomaji(playerName) : playerName;
+      const finalScoreText = retryMode ? `${score} / ${questions.length}` : `${score} / ${allQuestions.length}`;
+      doc.setFontSize(14);
+      doc.text("Quiz Results", 10, 10);
+      if (usernameForPdf) doc.text(`Name: ${usernameForPdf}`, 10, 20);
+      doc.text(`Score: ${finalScoreText}`, 10, 30);
+      let y = 40;
+      userAnswers.forEach((entry, idx) => {
+        if (!entry) return;
+        const originalQuestion = allQuestions.find(q => q.sentence === entry.question);
+        if(!originalQuestion) return;
+        
+        const linesQ = doc.splitTextToSize(`Q${idx + 1}: ${originalQuestion.sentence}`, 180);
+        doc.text(linesQ, 10, y); y += linesQ.length * 7;
+        const linesU = doc.splitTextToSize(`Your Answer: ${entry.user.join(", ")}`, 180);
+        doc.text(linesU, 10, y); y += linesU.length * 7;
+        const linesC = doc.splitTextToSize(`Correct Answer: ${originalQuestion.answers.join(", ")}`, 180);
+        doc.text(linesC, 10, y); y += linesC.length * 7 + 5;
+        if (y > 270) { doc.addPage(); y = 20; }
+      });
+      doc.save("quiz_results.pdf");
+    }
+
+    function downloadWrongPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.setFontSize(14);
+      doc.text("Wrong Vocabulary Results", 10, 10);
+      let y = 20;
+      wrongAnswers.forEach((q, idx) => {
+        const linesQ = doc.splitTextToSize(`${idx + 1}. ${q.sentence}`, 180);
+        doc.text(linesQ, 10, y); y += linesQ.length * 8;
+        const linesA = doc.splitTextToSize(`Answer: ${q.answers.join(", ")}`, 180);
+        doc.text(linesA, 10, y); y += linesA.length * 8 + 5;
+        if (y > 270) { doc.addPage(); y = 20; }
+      });
+      doc.save("Wrong-vocab.pdf");
+    }
+
+    function downloadHistoryPDF(historyRecord) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      let usernameForPdf = wanakana.isJapanese(historyRecord.name) ? wanakana.toRomaji(historyRecord.name) : historyRecord.name;
+      doc.setFontSize(16);
+      doc.text("Quiz Results", 105, 15, null, null, "center");
+      doc.setFontSize(12);
+      doc.text(`Name: ${usernameForPdf}`, 10, 25);
+      doc.text(`Score: ${historyRecord.score}`, 10, 32);
+      doc.text(`Date: ${historyRecord.date}`, 10, 39);
+      let y = 50;
+      historyRecord.results.forEach((entry, idx) => {
+        if (!entry) return;
+        const originalQuestion = allQuestions.find(q => q.sentence === entry.question);
+        if(!originalQuestion) return;
+
+        if (y > 270) {
+          doc.addPage();
+          y = 20;
+        }
+        const isCorrect = entry.user.every((ans, i) => (ans || "").toLowerCase() === (originalQuestion.answers[i] || "").toLowerCase());
+        doc.setFontSize(12);
+        doc.text(`Q${idx + 1}: ${originalQuestion.sentence}`, 10, y); y += 7;
+        doc.setFontSize(10);
+        doc.setTextColor(isCorrect ? '#28a745' : '#dc3545');
+        doc.text(`Your Answer: ${entry.user.join(", ") || "(no answer)"}`, 15, y); y += 7;
+        if (!isCorrect) {
+          doc.setTextColor('#333333');
+          doc.text(`Correct Answer: ${originalQuestion.answers.join(", ")}`, 15, y); y += 7;
+        }
+        y += 5;
+      });
+      const datePart = historyRecord.date.replace(/[/:\s]/g, '-');
+      const namePart = usernameForPdf.replace(/\s/g, '_');
+      doc.save(`${datePart}-${namePart}.pdf`);
+    }
+
+    function downloadAllQuestionsPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.setFontSize(16);
+      doc.text("Eiken Pre-1 Vocabulary List", 10, 15);
+      let y = 25;
+      doc.setFontSize(12);
+      allQuestions.forEach((q, idx) => {
+        if (y > 270) { doc.addPage(); y = 20; }
+        const questionText = `${idx + 1}. ${q.sentence.replace('___', `[ ${q.answers[0]} ]`)}`;
+        const linesQ = doc.splitTextToSize(questionText, 180);
+        doc.text(linesQ, 10, y);
+        y += linesQ.length * 7 + 5;
+      });
+      doc.save("Eiken-Pre-1-Vocab-List.pdf");
+    }
+    
+    // --- Event Listeners ---
+    pdfBtn.onclick = downloadPDF;
+    wrongPdfBtn.onclick = downloadWrongPDF;
+    submitBtn.onclick = checkAnswer;
+    nextBtn.onclick = handleNextClick;
+    prevBtn.onclick = goToPreviousQuestion;
+    showAllBtn.onclick = showAllResults;
+    retryBtn.onclick = retryIncorrect;
+    downloadAllBtn.onclick = downloadAllQuestionsPDF;
+    backToStartBtn.onclick = restartQuiz;
+
+    toggleHistoryBtn.addEventListener('click', () => {
+      if (historyContainer.classList.contains('show')) {
+        historyContainer.classList.remove('show');
+      } else {
+        const inputPassword = prompt('パスワードを入力してください:');
+        if (inputPassword === null) return;
+        if (inputPassword === CORRECT_PASSWORD) {
+          historyContainer.classList.add('show');
+        } else {
+          alert('パスワードが違います。');
+        }
+      }
+    });
+
+    closeHistoryBtn.onclick = () => {
+      historyContainer.classList.remove('show');
+    };
+
+    clearHistoryBtn.addEventListener('click', () => {
+      const inputPassword = prompt('履歴を削除するにはパスワードを入力してください:');
+      if (inputPassword === null) return;
+      if (inputPassword === CORRECT_PASSWORD) {
+        if (confirm('本当によろしいですか？すべての履歴が完全に削除されます。')) {
+          localStorage.removeItem('quizPlayHistory');
+          historySearchInput.value = '';
+          displayPlayHistory();
+          alert('履歴を削除しました。');
+        }
+      } else {
+        alert('パスワードが違います。');
+      }
+    });
+
+    function secretClickHandler() {
+      titleClickCount++;
+      clearTimeout(titleClickTimer);
+      titleClickTimer = setTimeout(() => {
+        titleClickCount = 0;
+      }, 1500);
+      if (titleClickCount >= 5) {
+        titleClickCount = 0;
+        clearTimeout(titleClickTimer);
+        toggleHistoryBtn.click();
+      }
+    }
+
+    mainTitle.addEventListener('click', secretClickHandler);
+    startScreenTitle.addEventListener('click', secretClickHandler);
+
+    document.addEventListener('keyup', (event) => {
+      if (event.key !== 'Enter') return;
+      if (keyupLock) {
+        keyupLock = false;
+        return;
+      }
+      if (document.activeElement && document.activeElement.tagName === 'INPUT') {
+        return;
+      }
+      if (!nextBtn.classList.contains('hidden')) {
+        handleNextClick();
+      } else if (!showAllBtn.classList.contains('hidden')) {
+        showAllResults();
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      displayPlayHistory();
+    });
+
+    usernameInput.addEventListener('input', () => {
+      startBtn.disabled = usernameInput.value.trim() === '';
+    });
+
+    startBtn.addEventListener('click', () => {
+      playerName = usernameInput.value.trim();
+      startScreen.classList.remove('animate-in');
+      startScreen.classList.add('hidden');
+      quizContainer.classList.remove('hidden');
+      header.classList.remove('hidden');
+      initQuiz();
+    });
+
+    usernameInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        if (!startBtn.disabled) {
+          event.preventDefault();
+          startBtn.click();
+        }
+      }
+    });
+
+    historySearchInput.addEventListener('input', () => {
+      displayPlayHistory(historySearchInput.value);
+    });
+  </script>
+</body>
+</html>
