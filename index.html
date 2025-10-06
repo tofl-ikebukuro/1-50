@@ -344,7 +344,7 @@
 </head>
 <body>
   <header class="hidden">
-    <div id="title">英検準1級単熟語EX　第一回(1-50)</div>
+    <div id="title">英検準1級単熟語EX　第1回(1-50)</div>
     <div id="header-buttons-container">
       <div id="top-row-buttons">
         <button class="button btn-blue" id="toggleHistoryBtn">履歴</button>
@@ -360,7 +360,7 @@
   </header>
 
   <div id="start-screen" class="animate-in">
-    <h1>英検準1級単熟語EX　第一回(1-50)</h1>
+    <h1>英検準1級単熟語EX　第1回(1-50)</h1>
     <p>Please enter your name to start the quiz.</p>
     <input type="text" id="username" placeholder="名前を入力">
     <button class="button btn-green" id="startBtn" disabled>クイズ開始</button>
@@ -392,350 +392,27 @@
 
   <script>
     const allQuestions = [
-  {
-    "sentence": "Patients are ___ to infection just after surgery.",
-    "answers": ["vulnerable"],
-    "translation": "Patients are vulnerable to infection just after surgery.",
-    "jpTranslation": "患者は手術の直後、感染症にかかりやすくなる。",
-    "blanksTranslation": ["傷つきやすい、かかりやすい"]
-  },
-  {
-    "sentence": "Make sure to ___ all the warning signs.",
-    "answers": ["heed"],
-    "translation": "Make sure to heed all the warning signs.",
-    "jpTranslation": "すべての警戒標識に気をつけるようにしてください。",
-    "blanksTranslation": ["〜に気をつける、を心に留める"]
-  },
-  {
-    "sentence": "A ___ captured the arrest on video.",
-    "answers": ["bystander"],
-    "translation": "A bystander captured the arrest on video.",
-    "jpTranslation": "その場に居合わせた人が逮捕の様子を動画に収めた。",
-    "blanksTranslation": ["傍観者、見物人"]
-  },
-  {
-    "sentence": "The bridge eases ___ in the area.",
-    "answers": ["congestion"],
-    "translation": "The bridge eases congestion in the area.",
-    "jpTranslation": "その橋は地域の混雑を緩和している。",
-    "blanksTranslation": ["混雑"]
-  },
-  {
-    "sentence": "She ___ all her appliances and replaced them with new ones.",
-    "answers": ["discarded"],
-    "translation": "She discarded all her appliances and replaced them with new ones.",
-    "jpTranslation": "彼女はすべての電化製品を捨て、新しいものに買い換えた。",
-    "blanksTranslation": ["〜を捨てる、処分する"]
-  },
-  {
-    "sentence": "The ___ was completely out of control and spread quickly.",
-    "answers": ["blaze"],
-    "translation": "The blaze was completely out of control and spread quickly.",
-    "jpTranslation": "炎は完全に制御不能で、あっという間に燃え広がった。",
-    "blanksTranslation": ["炎、火炎"]
-  },
-  {
-    "sentence": "He is a little ___ with a paintbrush.",
-    "answers": ["clumsy"],
-    "translation": "He is a little clumsy with a paintbrush.",
-    "jpTranslation": "彼は絵筆を使うのが少し不器用だ。",
-    "blanksTranslation": ["不器用な、ぎこちない"]
-  },
-  {
-    "sentence": "We must ___ major sources of pollution quickly.",
-    "answers": ["eliminate"],
-    "translation": "We must eliminate major sources of pollution quickly.",
-    "jpTranslation": "私たちは主要な汚染源を迅速に取り除かなければならない。",
-    "blanksTranslation": ["〜を取り除く、外す"]
-  },
-  {
-    "sentence": "Stock prices ___ after the company's announcement.",
-    "answers": ["soared"],
-    "translation": "Stock prices soared after the company's announcement.",
-    "jpTranslation": "その会社の発表後、株価は急騰した。",
-    "blanksTranslation": ["急上昇する、舞い上がる"]
-  },
-  {
-    "sentence": "The invention of the Internet had a ___ effect on our lives.",
-    "answers": ["profound"],
-    "translation": "The invention of the Internet had a profound effect on our lives.",
-    "jpTranslation": "インターネットの発明は私たちの生活に重大な影響を及ぼした。",
-    "blanksTranslation": ["重大な、深い"]
-  },
-  {
-    "sentence": "She has all the right ___ for the job.",
-    "answers": ["credentials"],
-    "translation": "She has all the right credentials for the job.",
-    "jpTranslation": "彼女はその仕事に申し分のない経歴を持っている。",
-    "blanksTranslation": ["経歴、資格"]
-  },
-  {
-    "sentence": "We need to ___ our contract before we sign it.",
-    "answers": ["amend"],
-    "translation": "We need to amend our contract before we sign it.",
-    "jpTranslation": "私たちは署名する前に契約書を修正する必要がある。",
-    "blanksTranslation": ["〜を修正する、改める"]
-  },
-  {
-    "sentence": "The politician's speech ___ the crowd.",
-    "answers": ["agitated"],
-    "translation": "The politician's speech agitated the crowd.",
-    "jpTranslation": "その政治家の演説は群衆を扇動した。",
-    "blanksTranslation": ["〜を扇動する、動揺させる"]
-  },
-  {
-    "sentence": "Please be ___ when you talk to him about the matter.",
-    "answers": ["discreet"],
-    "translation": "Please be discreet when you talk to him about the matter.",
-    "jpTranslation": "その件で彼と話すときは、くれぐれも慎重にお願いします。",
-    "blanksTranslation": ["分別のある、思慮深い"]
-  },
-  {
-    "sentence": "She ___ the house at one million dollars.",
-    "answers": ["appraised"],
-    "translation": "She appraised the house at one million dollars.",
-    "jpTranslation": "彼女はその家を100万ドルと査定した。",
-    "blanksTranslation": ["〜を評価する、鑑定する"]
-  },
-  {
-    "sentence": "Rice is a ___ food in many Asian countries.",
-    "answers": ["staple"],
-    "translation": "Rice is a staple food in many Asian countries.",
-    "jpTranslation": "米は多くのアジアの国で主食となっている。",
-    "blanksTranslation": ["必需食品、主要産物"]
-  },
-  {
-    "sentence": "These shoes are very ___ and will last a long time.",
-    "answers": ["durable"],
-    "translation": "These shoes are very durable and will last a long time.",
-    "jpTranslation": "この靴はとても丈夫で長持ちするだろう。",
-    "blanksTranslation": ["耐久性のある、丈夫な"]
-  },
-  {
-    "sentence": "He ordered a ___ from the menu.",
-    "answers": ["beverage"],
-    "translation": "He ordered a beverage from the menu.",
-    "jpTranslation": "彼はメニューから飲み物を注文した。",
-    "blanksTranslation": ["飲み物、飲料"]
-  },
-  {
-    "sentence": "The government ___ funds for the new project.",
-    "answers": ["allocated"],
-    "translation": "The government allocated funds for the new project.",
-    "jpTranslation": "政府は新しいプロジェクトに資金を割り当てた。",
-    "blanksTranslation": ["〜を割り当てる、分配する"]
-  },
-  {
-    "sentence": "She is a ___ expert in her field.",
-    "answers": ["renowned"],
-    "translation": "She is a renowned expert in her field.",
-    "jpTranslation": "彼女は自分の分野で有名な専門家だ。",
-    "blanksTranslation": ["名高い、著名な"]
-  },
-  {
-    "sentence": "Please place the ___ on the table.",
-    "answers": ["utensils"],
-    "translation": "Please place the utensils on the table.",
-    "jpTranslation": "食卓に食器を並べてください。",
-    "blanksTranslation": ["調理器具、家庭用品"]
-  },
-  {
-    "sentence": "He is a ___ and healthy man.",
-    "answers": ["robust"],
-    "translation": "He is a robust and healthy man.",
-    "jpTranslation": "彼はたくましくて健康な男性だ。",
-    "blanksTranslation": ["丈夫な、がっしりした"]
-  },
-  {
-    "sentence": "The painting ___ a beautiful landscape.",
-    "answers": ["depicts"],
-    "translation": "The painting depicts a beautiful landscape.",
-    "jpTranslation": "その絵画は美しい風景を描写している。",
-    "blanksTranslation": ["〜を描写する、描く"]
-  },
-  {
-    "sentence": "Please ___ the payment by the due date.",
-    "answers": ["remit"],
-    "translation": "Please remit the payment by the due date.",
-    "jpTranslation": "期日までに支払いをご送金ください。",
-    "blanksTranslation": ["〜を送金する、送る"]
-  },
-  {
-    "sentence": "The food will ___ if you leave it out of the refrigerator.",
-    "answers": ["perish"],
-    "translation": "The food will perish if you leave it out of the refrigerator.",
-    "jpTranslation": "冷蔵庫から出しておくと、食べ物は腐ってしまいます。",
-    "blanksTranslation": ["腐る、滅びる"]
-  },
-  {
-    "sentence": "Please ___ to the rules of the game.",
-    "answers": ["adhere"],
-    "translation": "Please adhere to the rules of the game.",
-    "jpTranslation": "ゲームのルールを守ってください。",
-    "blanksTranslation": ["〜を順守する、にくっつく"]
-  },
-  {
-    "sentence": "The roads are always ___ during rush hour.",
-    "answers": ["congested"],
-    "translation": "The roads are always congested during rush hour.",
-    "jpTranslation": "ラッシュアワーの間、道路はいつも混雑している。",
-    "blanksTranslation": ["混雑した、詰まった"]
-  },
-  {
-    "sentence": "The ___ company developed a new drug.",
-    "answers": ["pharmaceutical"],
-    "translation": "The pharmaceutical company developed a new drug.",
-    "jpTranslation": "その製薬会社は新薬を開発した。",
-    "blanksTranslation": ["製薬の、調剤の"]
-  },
-  {
-    "sentence": "The company will ___ you for your travel expenses.",
-    "answers": ["reimburse"],
-    "translation": "The company will reimburse you for your travel expenses.",
-    "jpTranslation": "会社はあなたの旅費を払い戻します。",
-    "blanksTranslation": ["〜を払い戻す、返済する"]
-  },
-  {
-    "sentence": "I can't ___ this product because I don't believe in it.",
-    "answers": ["endorse"],
-    "translation": "I can't endorse this product because I don't believe in it.",
-    "jpTranslation": "私はこの製品を信じていないので、推薦することはできません。",
-    "blanksTranslation": ["〜を推薦する、支持する"]
-  },
-  {
-    "sentence": "The sound of the rain was very ___.",
-    "answers": ["soothing"],
-    "translation": "The sound of the rain was very soothing.",
-    "jpTranslation": "雨の音はとても心地よかった。",
-    "blanksTranslation": ["心地よい、なだめるような"]
-  },
-  {
-    "sentence": "The plane went through a ___ patch of air.",
-    "answers": ["turbulent"],
-    "translation": "The plane went through a turbulent patch of air.",
-    "jpTranslation": "飛行機は乱気流の領域を通過した。",
-    "blanksTranslation": ["激動の、荒れ狂う"]
-  },
-  {
-    "sentence": "The book is a ___ of the author's life.",
-    "answers": ["chronicle"],
-    "translation": "The book is a chronicle of the author's life.",
-    "jpTranslation": "その本は著者の人生の記録だ。",
-    "blanksTranslation": ["年代記、記録"]
-  },
-  {
-    "sentence": "Please ___ your report to one page.",
-    "answers": ["condense"],
-    "translation": "Please condense your report to one page.",
-    "jpTranslation": "報告書を1ページにまとめてください。",
-    "blanksTranslation": ["〜を凝縮する、要約する"]
-  },
-  {
-    "sentence": "The package arrived ___, despite the long journey.",
-    "answers": ["intact"],
-    "translation": "The package arrived intact, despite the long journey.",
-    "jpTranslation": "長い旅にもかかわらず、荷物は無傷で届いた。",
-    "blanksTranslation": ["無傷の、損なわれていない"]
-  },
-  {
-    "sentence": "The ___ caused a shortage of water in the region.",
-    "answers": ["drought"],
-    "translation": "The drought caused a shortage of water in the region.",
-    "jpTranslation": "干ばつはその地域で水不足を引き起こした。",
-    "blanksTranslation": ["干ばつ、日照り続き"]
-  },
-  {
-    "sentence": "He has a very ___ business.",
-    "answers": ["lucrative"],
-    "translation": "He has a very lucrative business.",
-    "jpTranslation": "彼はとても儲かるビジネスをしている。",
-    "blanksTranslation": ["儲かる、有利な"]
-  },
-  {
-    "sentence": "The ___ of the students' scores was very high.",
-    "answers": ["aggregate"],
-    "translation": "The aggregate of the students' scores was very high.",
-    "jpTranslation": "生徒たちの合計点は非常に高かった。",
-    "blanksTranslation": ["総計、集合体"]
-  },
-  {
-    "sentence": "This software is not ___ with your computer.",
-    "answers": ["compatible"],
-    "translation": "This software is not compatible with your computer.",
-    "jpTranslation": "このソフトウェアはあなたのコンピュータと互換性がありません。",
-    "blanksTranslation": ["互換性のある、両立できる"]
-  },
-  {
-    "sentence": "The celebrity's ___ helped to sell the product.",
-    "answers": ["endorsement"],
-    "translation": "The celebrity's endorsement helped to sell the product.",
-    "jpTranslation": "その有名人の推薦は、製品の販売に役立った。",
-    "blanksTranslation": ["推薦、支持"]
-  },
-  {
-    "sentence": "You can save money by buying ___ drugs.",
-    "answers": ["generic"],
-    "translation": "You can save money by buying generic drugs.",
-    "jpTranslation": "ジェネリック医薬品を買うことでお金を節約できる。",
-    "blanksTranslation": ["一般的な、ブランド名のない"]
-  },
-  {
-    "sentence": "There is a ___ fee for using the service.",
-    "answers": ["nominal"],
-    "translation": "There is a nominal fee for using the service.",
-    "jpTranslation": "そのサービスを利用するには、ほんのわずかな手数料がかかる。",
-    "blanksTranslation": ["ほんのわずかの、名目上の"]
-  },
-  {
-    "sentence": "There is a ___ between the two reports.",
-    "answers": ["discrepancy"],
-    "translation": "There is a discrepancy between the two reports.",
-    "jpTranslation": "2つの報告書には食い違いがある。",
-    "blanksTranslation": ["食い違い、不一致"]
-  },
-  {
-    "sentence": "You are ___ for any damage you cause.",
-    "answers": ["liable"],
-    "translation": "You are liable for any damage you cause.",
-    "jpTranslation": "あなたが引き起こした損害については、あなたに責任があります。",
-    "blanksTranslation": ["責任がある、〜しがちな"]
-  },
-  {
-    "sentence": "The training program is very ___.",
-    "answers": ["rigorous"],
-    "translation": "The training program is very rigorous.",
-    "jpTranslation": "そのトレーニングプログラムは非常に厳しい。",
-    "blanksTranslation": ["厳格な、厳しい"]
-  },
-  {
-    "sentence": "He won the championship for the third ___ year.",
-    "answers": ["consecutive"],
-    "translation": "He won the championship for the third consecutive year.",
-    "jpTranslation": "彼は3年連続で選手権に優勝した。",
-    "blanksTranslation": ["連続した"]
-  },
-  {
-    "sentence": "The company agreed to ___ the fee.",
-    "answers": ["waive"],
-    "translation": "The company agreed to waive the fee.",
-    "jpTranslation": "会社はその料金を免除することに同意した。",
-    "blanksTranslation": ["〜を放棄する、差し控える"]
-  },
-  {
-    "sentence": "There was a ___ in demand for the new product.",
-    "answers": ["surge"],
-    "translation": "There was a surge in demand for the new product.",
-    "jpTranslation": "新製品への需要が急増した。",
-    "blanksTranslation": ["急増、殺到"]
-  },
-  {
-    "sentence": "He used his house as ___ for the loan.",
-    "answers": ["collateral"],
-    "translation": "He used his house as collateral for the loan.",
-    "jpTranslation": "彼はそのローンに家を担保として差し出した。",
-    "blanksTranslation": ["担保、保証物件"]
-  }
-];
+      { "sentence": "Patients are ___ to infection just after surgery.","answers": [ "vulnerable" ],"translation": "Patients are vulnerable to infection just after surgery.","jpTranslation": "患者は手術の直後、感染症にかかりやすくなる。","blanksTranslation": [ "かかりやすくなる" ] },
+      { "sentence": "Make sure to ___ all the warning signs.","answers": [ "heed" ],"translation": "Make sure to heed all the warning signs.","jpTranslation": "すべての警戒標識に気をつけるようにしてください。","blanksTranslation": [ "気をつける" ] },
+      { "sentence": "A ___ captured the arrest on video.","answers": [ "bystander" ],"translation": "A bystander captured the arrest on video.","jpTranslation": "その場に居合わせた人が逮捕の様子を動画に収めた。","blanksTranslation": [ "その場に居合わせた人" ] },
+      { "sentence": "The bridge eases ___ in the area.","answers": [ "congestion" ],"translation": "The bridge eases congestion in the area.","jpTranslation": "その橋は地域の混雑を緩和している。","blanksTranslation": [ "混雑" ] },
+      { "sentence": "She ___ all her appliances and replaced them with new ones.","answers": [ "discarded" ],"translation": "She discarded all her appliances and replaced them with new ones.","jpTranslation": "彼女はすべての電化製品を捨て、新しいものに買い換えた。","blanksTranslation": [ "捨て" ] },
+      { "sentence": "The ___ was completely out of control and spread quickly.","answers": [ "blaze" ],"translation": "The blaze was completely out of control and spread quickly.","jpTranslation": "炎は完全に制御不能で、あっという間に燃え広がった。","blanksTranslation": [ "炎" ] },
+      { "sentence": "He is a little ___ with a paintbrush.","answers": [ "clumsy" ],"translation": "He is a little clumsy with a paintbrush.","jpTranslation": "彼は絵筆を使うのが少し不器用だ。","blanksTranslation": [ "不器用だ" ] },
+      { "sentence": "We must ___ major sources of pollution quickly.","answers": [ "eliminate" ],"translation": "We must eliminate major sources of pollution quickly.","jpTranslation": "私たちは主要な汚染源を早急に除去しなければならない。","blanksTranslation": [ "除去しな" ] },
+      { "sentence": "The politician ___ his involvement in the scandal.","answers": [ "acknowledged" ],"translation": "The politician acknowledged his involvement in the scandal.","jpTranslation": "その政治家はスキャンダルへの関与を認めた。","blanksTranslation": [ "認めた" ] },
+      { "sentence": "\"Not all mushrooms are ___, so you have to be careful.\"","answers": [ "edible" ],"translation": "Not all mushrooms are edible, so you have to be careful.","jpTranslation": "すべてのキノコが食べられるわけではないので、注意が必要だ。","blanksTranslation": [ "食べられる" ] },
+      { "sentence": "Our people have ___ the land here for centuries.","answers": [ "cultivated" ],"translation": "Our people have cultivated the land here for centuries.","jpTranslation": "私たち一族は何世紀にもわたってこの土地を耕してきた。","blanksTranslation": [ "耕して" ] },
+      { "sentence": "She had to pay a fine because her payment was ___.","answers": [ "overdue" ],"translation": "She had to pay a fine because her payment was overdue.","jpTranslation": "支払いの期間が過ぎてしまったため、彼女は罰金を支払わなければならなかった。","blanksTranslation": [ "期間が過ぎて" ] },
+      { "sentence": "The university's ___ increases almost every year.","answers": [ "enrollment" ],"translation": "The university's enrollment increases almost every year.","jpTranslation": "その大学の登録者数はほとんど毎年増えている。","blanksTranslation": [ "登録者数" ] },
+      { "sentence": "He ___ the help of friends when setting up his business.","answers": [ "enlisted" ],"translation": "He enlisted the help of friends when setting up his business.","jpTranslation": "彼は会社を立ち上げるときに友人の援助を得た。","blanksTranslation": [ "得た" ] },
+      { "sentence": "___ reigned in the country during the civil war.","answers": [ "Anarchy" ],"translation": "Anarchy reigned in the country during the civil war.","jpTranslation": "内戦中、国は無政府状態になった。","blanksTranslation": [ "無政府状態" ] },
+      { "sentence": "She was ___ to give an answer.","answers": [ "reluctant" ],"translation": "She was reluctant to give an answer.","jpTranslation": "彼女は返事をしたがらなかった。","blanksTranslation": [ "したがらなかった" ] },
+      { "sentence": "Our company does not offer a service to ship ___ items.","answers": [ "fragile" ],"translation": "Our company does not offer a service to ship fragile items.","jpTranslation": "当社では、壊れやすいものの配送サービスは行っておりません。","blanksTranslation": [ "壊れやすい" ] },
+      { "sentence": "Your work performance will be ___ twice per year.","answers": [ "evaluated" ],"translation": "Your work performance will be evaluated twice per year.","jpTranslation": "業績は、年に2回評価されます。","blanksTranslation": [ "評価されます" ] },
+      { "sentence": "We will ___ the class at 3:00 p.m.","answers": [ "resume" ],"translation": "We will resume the class at 3:00 p.m.","jpTranslation": "午後3時に授業を再開します。","blanksTranslation": [ "再開します" ] },
+      { "sentence": "She was ___ after a day of walking in the city.","answers": [ "weary" ],"translation": "She was weary after a day of walking in the city.","jpTranslation": "彼女は一日中街を歩いて疲れきっていた。","blanksTranslation": [ "疲れきっていた" ] }
+    ];
 
     const CORRECT_PASSWORD = '1234';
 
